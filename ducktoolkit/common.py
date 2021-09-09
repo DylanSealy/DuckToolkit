@@ -62,7 +62,8 @@ decoder_command_keys = [
     "SLEEP",
     "APP",
     "STOP",
-    "POWER"
+    "POWER",
+    "GUI-CTRL"
     ]
 
 
