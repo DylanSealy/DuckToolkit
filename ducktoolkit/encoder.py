@@ -22,24 +22,24 @@ def hidg_write(elements):
 
 
 def parse_text(duck_text, lang_file, bunny):
-    
+
     if major_version == 3:
         # COnvert the lang file to bytes
         lang_file = { key.encode(): val.encode() for key, val in lang_file.items() }
-    
+
     line_count = 0
     encoded_file = []
     duck_text = duck_text.replace(b"\r", b"")
     cmd = instruction = False
 
     default_delay = 0
-    
+
     response = {
         "line_count": 0,
         "encoded_file": [],
         "valid": True,
         "message": ""
-        
+
     }
 
     for line in duck_text.split(b'\n'):
@@ -95,10 +95,10 @@ def parse_text(duck_text, lang_file, bunny):
             for i in range(repeat_count):
                 if cmd == b'STRING':
                     for char in instruction:
-                        
+
                         if major_version == 3:
                             char = bytes([char])
-                        
+
                         elements = lang_file[char].split(b',')
                         elements = [int(i, 16) for i in elements]
                         # Bunny Support
@@ -109,6 +109,8 @@ def parse_text(duck_text, lang_file, bunny):
                         else:
                             response['encoded_file'].append(convert_hex(elements[2]))
                             response['encoded_file'].append(convert_hex(elements[0]))
+                        delay = add_delay(int(3))
+                        response['encoded_file'].append(delay)
                         if DEBUG:
                             print(char, ': ', convert_hex(elements[2]), convert_hex(elements[0]))
 
@@ -120,7 +122,7 @@ def parse_text(duck_text, lang_file, bunny):
                         delay = add_delay(int(instruction))
                         response['encoded_file'].append(delay)
 
-                
+
 
                 elif cmd in iter(lang_file.keys()):
 
@@ -146,7 +148,7 @@ def parse_text(duck_text, lang_file, bunny):
                     if DEBUG:
                         print(instruction, ': ', convert_hex(elements[2]), convert_hex(elements[0]))
                 else:
-                    
+
                     response['valid'] = False
                     response['message'] = "{0} is not a valid command".format(cmd.decode('ascii'))
                     return response
@@ -195,7 +197,7 @@ def encode_script(duck_text, duck_lang, bunny=None):
             "valid": False,
             "message": "Error parsing duck_text: {0}".format(e)
         }
-        
+
 
     return response
 
